@@ -17,4 +17,4 @@ Function Get-CorpCompSysinfo {
             $outputobject = New-Object -TypeName psobject -Property $properties
             Write-Output $outputobject
                                         }
-                                  }
+                            }
