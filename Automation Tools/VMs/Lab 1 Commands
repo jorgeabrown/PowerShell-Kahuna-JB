@@ -1,7 +1,7 @@
-$PSVersionTable
-
+### Create $cred variable to store the credentials
 $cred = Get-Credential -Message "Enter an admin username and password for the operating system"
 
+### Create $vmParams variable to store the parameters for the new VM
 $vmParams = @{
             ResourceGroupName = 'ResourceGroup1'
             Name = 'TestVM1'
@@ -13,6 +13,7 @@ $vmParams = @{
             OpenPorts = 3389
              }
 
+### Create the VM using the $vmParams variable             
 $newVM1 = New-AzVM @vmParams
 
 $NewVM1
