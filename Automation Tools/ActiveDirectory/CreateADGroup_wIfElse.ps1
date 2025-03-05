@@ -6,7 +6,7 @@ $GroupName = "London Users"
 $GroupPath = "CN=$GroupName,$OUPath"
 
 ### Check if the group already exists
-if (Get-ADGroup -filter {DistinguishedName -eq $GroupPath} -SearchBase $OUPath -ErrorAction SilentlyContinue) {
+if (Get-ADGroup -filter {DistinguishedName -eq $GroupPath} -ErrorAction SilentlyContinue) {
     Write-Output "The group $GroupName already exists"
 ### If the group does not exist, create it    
 } else {
