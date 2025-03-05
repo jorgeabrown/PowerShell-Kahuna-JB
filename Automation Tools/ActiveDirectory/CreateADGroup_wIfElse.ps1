@@ -2,16 +2,16 @@
 $OUName = "London"
 $DomainDN = "DC=Adatum,DC=com"
 $OUPath = "OU=$OUName,$DomainDN"
-$ADGroup = "London Users"
-$GroupPath = "CN=$ADGroup,$OUPath"
+$GroupName = "London Users"
+$GroupPath = "CN=$GroupName,$OUPath"
 
 ### Check if the group already exists
 if (Get-ADGroup -filter {DistinguishedName -eq $GroupPath} -SearchBase $OUPath -ErrorAction SilentlyContinue) {
-    Write-Output "The group $ADGroup already exists"
+    Write-Output "The group $GroupName already exists"
 ### If the group does not exist, create it    
 } else {
-    New-ADGroup -Name $ADGroup -Path $OUPath -GroupScope Global -GroupCategory Security
-    Write-Output "The group $ADGroup has been created."
+    New-ADGroup -Name $GroupName -Path $OUPath -GroupScope Global -GroupCategory Security
+    Write-Output "The group $GroupName has been created."
 }
 
 ### Clean
