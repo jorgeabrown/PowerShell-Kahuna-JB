@@ -1,0 +1,1 @@
+$age = (Get-Date).AddDays(-90);Get-ADUser -Filter {LastLogonTimeStamp -lt $age -and enabled -eq $true} -Properties LastLogonTimeStamp

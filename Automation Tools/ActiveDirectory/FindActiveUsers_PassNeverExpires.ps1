@@ -1,0 +1,1 @@
+Get-ADUser -Filter {Enabled -eq $true -and AccountExpires -eq 9223372036854775807} -Properties name,accountexpires
