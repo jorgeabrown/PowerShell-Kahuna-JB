@@ -11,3 +11,6 @@ if (Get-ADOrganizationalUnit -Filter {DistinguishedName -eq $OUPath} -SearchBase
 New-ADOrganizationalUnit -Name $OUName -Path $DomainDN
 Write-Output "The OU $OUName has been created."
 }
+
+### Clean
+Remove-ADOrganizationalUnit -Identity $OUPath
