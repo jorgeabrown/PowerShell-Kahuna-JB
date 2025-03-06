@@ -7,4 +7,7 @@ $GroupName = "London Users"
 foreach ($user in $users) {
     Move-ADObject -Identity $user.DistinguishedName -TargetPath $OUPath
     Add-ADGroupMember -Identity $GroupName -Members $user
+    Write-Output "Moved $user.Name to $OUPath and added to $GroupName group"
 }
+
+Write-Output "Task Completed Successfully"
