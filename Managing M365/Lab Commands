@@ -1,0 +1,51 @@
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+### Install the Graph Module 
+Install-Module Microsoft.Graph -Scope CurrentUser
+
+### View the installed Graph Module
+Get-InstalledModule Microsoft.Graph
+
+### Connect to Microsoft.Graph
+# Using interactive authentication for users, groups, teamsettings, RoleManagement.
+Connect-MgGraph -Scopes "User.ReadWrite.All", "Application.ReadWrite.All", "Sites.ReadWrite.All", "Directory.ReadWrite.All", "Group.ReadWrite.All", "RoleManagement.ReadWrite.Directory"
+
+### View list of users in Entra ID
+Get-MgUser
+
+### Retrieve your organizations verified domain
+$verifiedDomain = (Get-MgOrganization).VerifiedDomains[0].Name
+
+### Create a password file for the new user
+$PasswordProfile = @{  
+"Password"="<password>";  
+"ForceChangePasswordNextSignIn"=$true  
+} 
+
+### Create a new Entra ID User
+New-MgUser -DisplayName "Noreen Riggs" -UserPrincipalName "Noreen@$verifiedDomain" -AccountEnabled -PasswordProfile $PasswordProfile -MailNickName "Noreen"
+
+### Store a reference to the new user in a variable
+$user = Get-MgUser -UserId "Noreen@$verifiedDomain"
+
+### Store a reference to the Global Admin role in a variable 
+$role = Get-MgDirectoryRole | Where {$_.displayName -eq 'Global Administrator'}
+
+### Assign the Global Admin role to the user account
+$OdataId = "https://graph.microsoft.com/v1.0/directoryObjects/" + $user.id  
+New-MgDirectoryRoleMemberByRef -DirectoryRoleId $role.id -OdataId $OdataId   
+
+### Verify the role has been assigned
+Get-MgDirectoryRoleMember -DirectoryRoleId $role.id
+
+# Create a License and new User
+
+### Create another user
+New-MgUser -DisplayName "Allan Yoo" -UserPrincipalName Allan@$verifiedDomain -AccountEnabled -PasswordProfile $PasswordProfile -MailNickName "Allan"
+
+### Set the Location
+Update-MgUser -UserId Allan@$verifiedDomain -UsageLocation US
+
+### Review assigned licenses in the tenant
+Get-MgSubscribedSku | FL
+
