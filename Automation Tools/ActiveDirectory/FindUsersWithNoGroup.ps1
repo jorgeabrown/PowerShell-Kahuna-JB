@@ -1,7 +1,7 @@
 ### Set variables for the group, OU, domain, and users
-$GroupName = "Sales"
-$OUName = "Sales"
-$DomainDN = "DC=Adatum,DC=com"
+$GroupName = "IT Admins"
+$OUName = "Users,OU=IT"
+$DomainDN = "DC=homelab,DC=com"
 $OUPath = "OU=$OUName,$DomainDN"
 $users = Get-ADUser -Filter * -SearchBase $OUPath
 
@@ -11,8 +11,8 @@ foreach ($user in $users) {
 
     if (-not $isMember) {
         Add-ADGroupMember -Identity $GroupName -Members $user
-        Write-Host "Added $($user.SamAccountName) to $GroupName"
+        Write-Host "Added $($user.Name) to $GroupName"
     } else {
-        Write-Host "$($user.SamAccountName) is already a member of $GroupName"
+        Write-Host "$($user.Name) is already a member of $GroupName"
     }
     }
