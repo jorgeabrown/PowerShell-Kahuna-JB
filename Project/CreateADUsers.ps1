@@ -1,11 +1,17 @@
 ### Import CSV file into the $users variable
-$users = Import-CSV -Path C:\Users\User\users.csv
+$users = Import-CSV -Path "C:\users.csv"
 
 ### Loop through each user in the $users variable
 foreach ($user in $users) {
-    $path = "OU=" + $u.Department + ",DC=Domain,DC=com"
-    $upn = $user.UserID + "@domain.com:"
+
+try {
+    $path = "OU=" + $user.Department + ",DC=Adatum,DC=com"
+    $upn = $user.First + "@adatum.com"
     $display = $user.First + " " + $user.Last
-    Write-Host "Creating $display in $path"
-    New-ADUser -GivenName $user.First -Surname $user.Last -Name $display -DisplayName $display -SamAccountName $user.UserID -UserprincipalName $UPN -Path $path -Department $u.Department
-                          }
+    New-ADUser -Name $display -SamAccountName $user.First -UserPrincipalName $upn -GivenName $user.First -Surname $user.Last -DisplayName $display -Path $path -AccountPassword (ConvertTo-SecureString "P@ssw0rd" -AsPlainText -Force) -Enabled $true
+            Write-Host "User $display created successfully" -ForegroundColor Green
+} catch {
+            Write-Host "Failed to create user $display" -ForegroundColor Red
+            Write-Host $_.Exception.Message
+        }
+                         }               
