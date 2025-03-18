@@ -1,3 +1,5 @@
+# This script will find user accounts that will expire within 14 days and export the results to a CSV file. It will also provide an email template for notifying the users.
+
 ### Set users with an expiration date of 14 days from today so you can test the script and see the results.
 $salesusers = Get-ADUser -Filter * -SearchBase "OU=Sales,DC=Adatum,DC=Com" | Select-Object samAccountName
 
