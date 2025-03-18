@@ -1,3 +1,6 @@
+# This script creates Active Directory users from a CSV file
+# The CSV file should have the following columns: First, Last, Department
+
 ### Import CSV file into the $users variable
 $users = Import-CSV -Path "C:\users.csv"
 

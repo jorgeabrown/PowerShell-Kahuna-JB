@@ -1,3 +1,5 @@
+# This script will log user logon and logoff events on multiple computers and save the logs to a shared drive.
+
 ### List the computers you want to run this script on
 $computerList = Get-ADComputer -Filter * | Select-Object -ExpandProperty Name
 
