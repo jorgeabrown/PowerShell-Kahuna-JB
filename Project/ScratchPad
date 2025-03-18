@@ -8,3 +8,9 @@
     Get-WinEvent -FilterHashtable $filter | Select-Object -Property * | Export-Csv -Path C:\ClassFiles-JB\winevent.csv -NoTypeInformation
 
     Get-WinEvent -FilterHashtable $filter | Select-Object -ExpandProperty Properties | Out-GridView
+
+    Get-winevent -FilterHashtable $filter | Select-Object -ExpandProperty Properties[5].Value
+
+
+
+    

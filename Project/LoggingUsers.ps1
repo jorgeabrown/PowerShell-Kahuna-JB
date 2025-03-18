@@ -1,6 +1,7 @@
 ### List of Target Computers
 $computerList = Get-ADComputer -Filter * | Select-Object -ExpandProperty Name
 
+### 
 $baseSharedrive = "\\LON-DC1\Logs"
 
 ### Script to run on each computer
@@ -29,5 +30,5 @@ foreach ($computer in $computerList) {
     }
     $results = Invoke-Command -ComputerName $computer -ScriptBlock $scriptBlock
     $filepath = Join-Path -Path $computerfolderpath -ChildPath "UserLogonLog.csv"
-    $results | Export-csv -path $filepath -NoTypeInformation -Append
+    $results | Export-csv -path $filepath -NoTypeInformation
   }
