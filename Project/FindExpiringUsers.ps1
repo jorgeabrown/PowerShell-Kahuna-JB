@@ -18,7 +18,7 @@ if ($expiringUsers.count -gt 0) {
     $expiringUsers | Export-Csv -Path "C:\Reports\ExpiringUsers.csv" -NoTypeInformation
     Write-Host "Results exported to C:\Reports" -ForegroundColor Magenta
     Write-Host "Here is an email template: ALCON, if you are on the TO line, your account is set to expire within 14 days. Please complete your cyber training
-    and contact your supervisor for further guidance." -ForegroundColor Yellow
+    and contact your supervisor for further guidance." -ForegroundColor DarkCyan
 } else {
     Write-Host "No expiring users found." -ForegroundColor Green
 }
