@@ -1,3 +1,15 @@
-Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName LON-DC1 | Select-Object CSName,LastBootUpTime
+# $netdrive = New-PSDrive -Name "W" -PSProvider FileSystem -Root "\\LON-DC1\WorkFiles" -Persist
+# Remove-PSDrive -Name "W"
 
-Test-Connection -ComputerName LON-DC1 -Count 1 -Quiet
+New-GPO -Name "Mapped Drives" -Comment "Ensures computers have the network drive mapped" -Domain "adatum.com"
+New-GPLink -Name "Mapped Drives" -Target "DC=Adatum,DC=com"
+$ScriptPath = "\\LON-DC1\Workfiles\Scripts\MappedDrives.ps1"
+
+Set-GPRegistryValue -Name "Mapped Drives" -Key "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Systems\Scripts\Startup" -ValueName "0" -Type String -Value $ScriptPath
+
+Get-GPRegistryValue -Name "Mapped Drives" -Key "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Systems\Scripts\Startup"
+
+Invoke-Command -ComputerName LON-SVR1 -ScriptBlock {gpupdate /force}
+Invoke-Command -ComputerName LON-SVR1 -ScriptBlock {Restart-Computer -Force}
+
+Remove-GPO -Name "Mapped Drives" -Confirm:$false
