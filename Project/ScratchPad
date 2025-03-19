@@ -1,3 +1,3 @@
-
+Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName LON-DC1 | Select-Object CSName,LastBootUpTime
 
 Test-Connection -ComputerName LON-DC1 -Count 1 -Quiet
