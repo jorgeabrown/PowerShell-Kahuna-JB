@@ -1,10 +1,10 @@
 # This script will log user logon and logoff events on multiple computers and save the logs to a shared drive.
-
+# Does require that a GPO is set for auditing logon and logoff events.
 ### List the computers you want to run this script on
 $computerList = Get-ADComputer -Filter * | Select-Object -ExpandProperty Name
 
 ### Specify location of where you want the logs to go to
-$baseSharedrive = "\\LON-DC1\Logs"
+$baseSharedrive = "\\LON-DC1\WorkFiles\Logs"
 
 ### Script to run on each computer
 $scriptBlock = {
@@ -40,3 +40,4 @@ foreach ($computer in $computerList) {
     $filepath = Join-Path -Path $computerfolderpath -ChildPath "UserLogonLog.csv"
     $results | Export-csv -path $filepath -NoTypeInformation -Append
   }
+

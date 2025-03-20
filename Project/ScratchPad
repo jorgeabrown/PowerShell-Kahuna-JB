@@ -1,20 +1,38 @@
-### Test the script
-New-PSDrive -Name "W" -Root "\\LON-DC1\Workfiles" -PSProvider FileSystem -Persist
+# Secure AD DS by auditing who is a member of all groups that have the word "Admin" in their name
+# Useful to have a baseline for comparison of group membership changes
 
-Remove-PSDrive -Name "W"
+$admingroups = Get-ADGroup -Filter {name -like "*Admin*"} | Select-object samaccountname, distinguishedname
 
-### GPO creation
 
-New-GPO -Name "Drive Mapping" -Comment "Drive Mapping" -Domain "adatum.com"
 
-Set-GPRegistryValue -Name "Drive Mapping" -Key "HKLM\Software\Microsoft\Windows\CurrentVersion\Group Policy\Scripts\Startup" -ValueName "0" -Type String -Value "\\Lon-dc1\sysvol\Adatum.com\scripts"
+foreach ($group in $admingroups) {
+   #$groupmembershipdata = Get-ADGroupMember -Identity $group.samaccountname | ForEach-Object {
+    $groupmembershipdata = Get-ADGroupMember -Identity ($group.samaccountname) | ForEach-Object {
 
-New-GPLink -Name "Drive Mapping" -Target "dc=adatum,dc=com" -LinkEnabled Yes
+        #[PSCustomObject]@{
+            $GroupName = $group.samaccountname
+            #Membername = $groupmembershipdata.Name
+            $Membername = ($group.Name)
 
-### Gpupdate / Restart / Delete GPO
+            #DistinguishedName = $groupmembershipdata.DistinguishedName
+            $DistinguishedName = ($group.DistinguishedName)
+            $ObjectType = $_.Objectclass
+    
+        #}
+        #$groupmembershipdata | Export-Csv -Path \\LON-DC1\WorkFiles\Reports\GroupMembership.csv -NoTypeInformation
+        $
+    }
+}
+#$groupmembershipdata | Export-Csv -Path \\LON-DC1\WorkFiles\Reports\GroupMembership.csv -NoTypeInformation
 
-Invoke-Command -ComputerName "LON-SVR1" -ScriptBlock {gpupdate /force}
+$baselinefile = "\\LON-DC1\WorkFiles\Reports\BaselineGroupMembership.csv"
+$currentfile = "\\LON-DC1\WorkFiles\Reports\GroupMembership.csv"
 
-Invoke-Command -ComputerName "LON-SVR1" -ScriptBlock {Restart-Computer -Force}
+$baseline = Import-Csv -Path $baselinefile
+$current = Import-Csv -Path $currentfile
 
-Remove-GPO -Name "Drive Mapping" -Confirm:$false
+$added = Compare-Object -ReferenceObject $baseline -DifferenceObject $current -Property GroupName,Membername,DistinguishedName,ObjectType -PassThru | Where-Object {$_.SideIndicator -eq "=>"}
+
+
+$added | Format-Table -AutoSize
+
