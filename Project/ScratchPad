@@ -1,0 +1,20 @@
+### Test the script
+New-PSDrive -Name "W" -Root "\\LON-DC1\Workfiles" -PSProvider FileSystem -Persist
+
+Remove-PSDrive -Name "W"
+
+### GPO creation
+
+New-GPO -Name "Drive Mapping" -Comment "Drive Mapping" -Domain "adatum.com"
+
+Set-GPRegistryValue -Name "Drive Mapping" -Key "HKLM\Software\Microsoft\Windows\CurrentVersion\Group Policy\Scripts\Startup" -ValueName "0" -Type String -Value "\\Lon-dc1\sysvol\Adatum.com\scripts"
+
+New-GPLink -Name "Drive Mapping" -Target "dc=adatum,dc=com" -LinkEnabled Yes
+
+### Gpupdate / Restart / Delete GPO
+
+Invoke-Command -ComputerName "LON-SVR1" -ScriptBlock {gpupdate /force}
+
+Invoke-Command -ComputerName "LON-SVR1" -ScriptBlock {Restart-Computer -Force}
+
+Remove-GPO -Name "Drive Mapping" -Confirm:$false
