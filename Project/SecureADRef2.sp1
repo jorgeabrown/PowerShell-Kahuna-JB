@@ -1,0 +1,61 @@
+ $admingroups = (Get-ADGroup -Filter {name -like "*Admin*"}).samaccountname
+ $groupmembershipdata =$null
+
+
+#Build a table to format the results 
+$table = $null
+$col1 = $null
+$col2 = $null
+$col3 = $null
+$col4 = $null
+
+
+$table = New-Object system.Data.DataTable "SecureADDS" 
+$col1 = New-Object system.Data.DataColumn GroupName,([string])
+$table.columns.add($col1) 
+$col2 = New-Object system.Data.DataColumn UserName,([string]) 
+$table.columns.add($col2) 
+$col3 = New-Object system.Data.DataColumn DN,([string]) 
+$table.columns.add($col3)
+$col4 = New-Object system.Data.DataColumn Type,([string]) 
+$table.columns.add($col4)
+
+<#
+            GroupName = $groupmembershipdata.name
+            
+            Membername = ($groupmembershipdata.name)
+            DistinguishedName = ($groupmembershipdata.DistinguishedName)
+            ObjectType = ($groupmembershipdata.Objectclass)
+
+
+#>
+
+#Transpose hashtable to datatable 
+#ForEach ($Recipient in $MailTraffic.keys){ 
+foreach ($group in $admingroups) {
+    foreach($GMember in $groupmembershipdata) {
+   
+        $row = $table.NewRow() 
+        $row.GroupName= $group
+        $row.UserName = ($GMember.name)
+        $row.DN = ($GMember.DistinguishedName)
+        $row.Type = ($GMember.Objectclass)
+        $table.Rows.Add($row)     
+        } 
+    }
+
+
+$NewTable=$null
+$NewTable = New-Object System.Collections.ArrayList
+
+foreach ($TableEntry in $table){
+    foreach ($group in $admingroups) {
+        foreach($GMember in $groupmembershipdata) {
+            $NewTable.Add([pscustomobject]@{GroupName=($Tableentry.$group);UserName=($Tableentry.$GMember.name);DN=($Tableentry.$GMember.DistinguishedName);Type=($Tableentry.$GMember.ObjectClass)})
+            Write-Host ($group),($GMember.name),($GMember.distinguishedName),($GMember.objectClass)
+            }
+        }
+    }
+                                                                      
+$NewTable
+
